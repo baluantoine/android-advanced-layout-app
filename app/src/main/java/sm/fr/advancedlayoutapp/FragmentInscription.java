@@ -20,7 +20,6 @@ public class FragmentInscription extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -35,7 +34,6 @@ public class FragmentInscription extends Fragment {
 
         EditText userEditText = view.findViewById(R.id.editTextInscription);
         String userName = userEditText.getText().toString();
-
 
         //Gestion du clic sur le bouton valider
         Button btValid = view.findViewById(R.id.buttonInsription);
