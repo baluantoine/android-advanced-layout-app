@@ -75,9 +75,14 @@ public class DrawerActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+            navigateToFragment(new FragmentB());
+        }
 
-        } else if (id == R.id.nav_slideshow) {
+        else if (id == R.id.nav_gallery) {
+            navigateToFragment(new InscriptionFragment());
+        }
+
+        else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
 
