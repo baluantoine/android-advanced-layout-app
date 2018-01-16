@@ -58,7 +58,6 @@ public class RandomUserFragment extends Fragment {
         for(int i=0; i < userList.size(); i++){
             data[i] = userList.get(i).getName();
         }
-
         //Définition d'un ArrayAdapter pour alimenter la listeview
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this.getActivity(),
