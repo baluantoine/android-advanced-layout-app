@@ -170,6 +170,7 @@ public class DrawerActivity extends AppCompatActivity
                     userEmailTextView.setText(userEmail);
                 }
 
+
                 //Masquage
                 navigationView.getMenu().findItem(R.id.action_login).setVisible(false);
 
