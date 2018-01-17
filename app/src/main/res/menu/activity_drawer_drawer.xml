@@ -8,6 +8,13 @@
         android:title="Login"
         android:onClick="onLogin"/>
 
+    <item
+        android:id="@+id/action_logout"
+        android:icon="@drawable/ic_person_outline_black_24dp"
+        android:onClick="onLogout"
+        android:title="Logout"
+        android:visible="false" />
+
     <group android:checkableBehavior="single">
 
         <item

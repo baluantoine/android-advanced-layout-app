@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
@@ -170,14 +173,43 @@ public class DrawerActivity extends AppCompatActivity
                     userEmailTextView.setText(userEmail);
                 }
 
-
-                //Masquage
+                //Masquage du lien login
                 navigationView.getMenu().findItem(R.id.action_login).setVisible(false);
+                //Affichage  du lien logout
+                navigationView.getMenu().findItem(R.id.action_logout).setVisible(true);
 
             }else{
-                Log.d("Main", "Erreur Fireauth code: " + response.getErrorCode());
-                Toast.makeText(this, "impossible de s'authentifier", Toast.LENGTH_LONG);
+                if(response != null){
+                    Log.d("Main", "Erreur Fireauth code: " + response.getErrorCode());
+                }
+                Toast.makeText(this, "Impossible de s'authentifier", Toast.LENGTH_LONG);
             }
         }
+    }
+
+    /**
+     * Gestion de déconnexion login et logout
+     * @param item
+     */
+    public void onLogout(MenuItem item){
+        AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                //Affichage du lien Login
+                navigationView.getMenu().findItem(R.id.action_login).setVisible(true);
+                //Affichage du lien Logout
+                navigationView.getMenu().findItem(R.id.action_logout).setVisible(false);
+
+                //Suppression des infos utilisateur dans l'en-tête
+                userNameTextView.setText("");
+                userEmailTextView.setText("");
+
+                fbUser = null;
+
+                //Fermeture du menu
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        });
+
     }
 }
