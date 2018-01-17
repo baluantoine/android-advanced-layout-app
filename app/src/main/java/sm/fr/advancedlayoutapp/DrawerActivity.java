@@ -3,21 +3,42 @@ package sm.fr.advancedlayoutapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.IdRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.auth.api.Auth;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import java.util.ArrayList;
+import java.util.List;
 import sm.fr.advancedlayoutapp.model.User;
 
 public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private User user;
+    //Code pour référencer le login
+    public final int LOGIN_REQUESTCODE = 1;
+
+    private TextView userNameTextView;
+    private TextView userEmailTextView;
+
+    private NavigationView navigationView;
+    private DrawerLayout drawer;
+
+    private FirebaseUser fbUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +53,13 @@ public class DrawerActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //Référence aux TextView dans l'en-tête de la navigation
+        View headerView = ((NavigationView) navigationView.findViewById(R.id.nav_view)).getHeaderView(0);
+        userEmailTextView = headerView.findViewById(R.id.headerUserEmail);
+        userNameTextView = headerView.findViewById(R.id.headerUserName);
 
         //Instanciation d'un utilisateur
         this.user = new User();
@@ -113,5 +139,44 @@ public class DrawerActivity extends AppCompatActivity
 
     public void goToFragmentB(){
         navigateToFragment(new FragmentB());
+    }
+
+    /**
+     * Lancement de la procédure d'authentification
+     * @param item
+     */
+    public void onLogin(MenuItem item) {
+        //Définir une liste des fournisseur d'authentification
+        List<AuthUI.IdpConfig> providers = new ArrayList<>();
+                providers.add(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build());
+        //Lancement de l'activité d'authentification
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(), LOGIN_REQUESTCODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == LOGIN_REQUESTCODE){
+            //Récupération de la réponse
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if(requestCode == RESULT_OK){
+                fbUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                //Afficher des infos utilisateur
+                if(fbUser != null){
+                    String userName = fbUser.getDisplayName();
+                    String userEmail = fbUser.getEmail();
+                    userNameTextView.setText(userName);
+                    userEmailTextView.setText(userEmail);
+                }
+
+                //Masquage
+                navigationView.getMenu().findItem(R.id.action_login).setVisible(false);
+
+            }else{
+                Log.d("Main", "Erreur Fireauth code: " + response.getErrorCode());
+                Toast.makeText(this, "impossible de s'authentifier", Toast.LENGTH_LONG);
+            }
+        }
     }
 }
