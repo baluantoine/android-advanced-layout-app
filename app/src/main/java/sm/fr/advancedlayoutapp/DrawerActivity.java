@@ -1,5 +1,6 @@
 package sm.fr.advancedlayoutapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.NavigationView;
@@ -89,6 +90,8 @@ public class DrawerActivity extends AppCompatActivity
             navigateToFragment(new RandomUserFragment());
 
         } else if (id == R.id.nav_manage) {
+            Intent mapIntention = new  Intent(this, MapsActivity.class);
+            startActivity(mapIntention);
 
         }
 
